@@ -3988,7 +3988,7 @@ int64_t tcg_cpu_exec_time(void)
 #endif
 
 
-int tcg_gen_code(TCGContext *s, TranslationBlock *tb)
+int tcg_gen_code(CPUState *cpu,TCGContext *s, TranslationBlock *tb)
 {
 #ifdef CONFIG_PROFILER
     TCGProfile *prof = &s->prof;
@@ -4153,10 +4153,17 @@ int tcg_gen_code(TCGContext *s, TranslationBlock *tb)
             tcg_out_label(s, arg_label(op->args[0]), s->code_ptr);
             break;
         case INDEX_op_call:
+            cpu->rop_counter = cpu->rop_counter + 1;  
             tcg_reg_alloc_call(s, op);
             break;
         default:
             /* Sanity check that we've not introduced any unhandled opcodes. */
+            if(opc == INDEX_op_br){
+                cpu->rop_counter = cpu->rop_counter -1;
+            }
+            if(cpu->rop_counter == -1){
+                printf("exploit rop");
+            }
             tcg_debug_assert(tcg_op_supported(opc));
             /* Note: in order to speed up the code, it would be much
                faster to have specialized register allocator functions for

@@ -1758,7 +1758,7 @@ TranslationBlock *tb_gen_code(CPUState *cpu,
     ti = profile_getclock();
 #endif
 
-    gen_code_size = tcg_gen_code(tcg_ctx, tb);
+    gen_code_size = tcg_gen_code(cpu, tcg_ctx, tb);
     if (unlikely(gen_code_size < 0)) {
         switch (gen_code_size) {
         case -1:
