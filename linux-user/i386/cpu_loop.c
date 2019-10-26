@@ -84,6 +84,7 @@ static void set_idt(int n, unsigned int dpl)
 void cpu_loop(CPUX86State *env)
 {
     CPUState *cs = env_cpu(env);
+    cs->rop_counter = 0;
     int trapnr;
     abi_ulong pc;
     abi_ulong ret;
